@@ -17,7 +17,7 @@ RUN npm run build -- --configuration production
 FROM nginx:alpine
 
 # Copy Angular build output to Nginx html folder
-COPY --from=build /dist/merlin-dashboard /usr/share/nginx/html
+COPY --from=build /app/dist/merlin-dashboard /usr/share/nginx/html
 
 # Copy Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf

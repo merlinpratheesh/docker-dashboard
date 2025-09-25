@@ -14,16 +14,20 @@ pipeline {
             }
         }
 
-        stage('Build & Package Docker Image') {
+        stage('Build Docker Image') {
             steps {
+                // Build the Docker image (runs Angular build inside Docker)
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
 
         stage('Deploy Docker Container') {
             steps {
+                // Stop existing container if running
                 bat "docker stop %APP_NAME% || exit 0"
                 bat "docker rm %APP_NAME% || exit 0"
+
+                // Run new container on port 5001
                 bat "docker run -d -p 5001:80 --name %APP_NAME% %IMAGE_NAME%:%IMAGE_TAG%"
             }
         }
