@@ -1,14 +1,27 @@
-# Use Nginx to serve the Angular app
+# Stage 1: Build Angular app
+FROM node:22 AS build
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies (includes Angular CLI)
+RUN npm ci
+
+# Copy all source code
+COPY . .
+
+# Build Angular for production (project name is merlin-dashboard)
+RUN npx --yes ng build merlin-dashboard --configuration production
+
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Set working directory
-WORKDIR /usr/share/nginx/html
+# Copy Angular build output to Nginx html folder
+COPY --from=build /app/dist/merlin-dashboard /usr/share/nginx/html
 
-# Copy pre-built Angular app from Jenkins workspace
-# Assuming you build Docker from workspace root (merlinDockerDeploy)
-COPY dist/docker-deploy/browser .
-
-# Copy custom Nginx configuration for Angular routing
+# Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
