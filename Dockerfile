@@ -5,7 +5,7 @@ FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
 # Copy pre-built Angular app from Jenkins workspace
-COPY dist/merlin-dashboard .
+COPY dist/merlin-dashboard/browser .
 
 # Copy custom Nginx configuration for Angular routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
