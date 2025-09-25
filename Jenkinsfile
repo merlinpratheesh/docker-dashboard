@@ -5,6 +5,7 @@ pipeline {
         APP_NAME   = "merlin-dashboard"
         IMAGE_NAME = "merlin-dashboard"
         IMAGE_TAG  = "latest"
+        DIST_DIR   = "dist/merlin-dashboard" // relative path inside workspace
     }
 
     stages {
@@ -14,13 +15,7 @@ pipeline {
             }
         }
 
-        stage('Install & Build Angular') {
-            steps {
-                bat 'npm ci'
-                bat 'npx ng build merlin-dashboard --configuration production'
-            }
-        }
-
+        // No need to build Angular inside Docker
         stage('Build Docker Image') {
             steps {
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
@@ -41,7 +36,7 @@ pipeline {
             echo "✅ Docker deployment completed successfully! Access app at http://<server-ip>:5001"
         }
         failure {
-            echo "❌ Deployment failed."
+            echo "❌ Deployment failed. Check Docker logs for details."
         }
     }
 }
