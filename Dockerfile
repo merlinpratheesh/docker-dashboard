@@ -3,15 +3,17 @@ FROM node:22 AS build
 
 WORKDIR /app
 
-# Install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies including devDependencies
 RUN npm install
 
-# Copy source code
+# Copy the rest of the source code
 COPY . .
 
-# Build Angular for production using npx
-RUN npx ng build --configuration production
+# Build Angular for production (specify project name)
+RUN npx ng build merlin-dashboard --configuration production
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
