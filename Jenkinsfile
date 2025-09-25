@@ -5,7 +5,7 @@ pipeline {
         APP_NAME   = "merlin-dashboard"
         IMAGE_NAME = "merlin-dashboard"
         IMAGE_TAG  = "latest"
-        DIST_DIR   = "dist/merlin-dashboard" // relative path inside workspace
+        DIST_DIR   = "dist/docker-deploy" // relative path inside workspace
     }
 
     stages {
