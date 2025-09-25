@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image (runs Angular build inside Docker)
+                // Build Docker image (Angular build runs inside Docker)
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
