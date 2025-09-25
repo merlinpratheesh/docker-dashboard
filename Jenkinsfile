@@ -2,31 +2,34 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "merlin-dashboard"
+        APP_NAME   = "merlin-dashboard"
         IMAGE_NAME = "merlin-dashboard"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG  = "latest"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
+                // Pull latest code from GitHub
                 git branch: 'master', url: 'https://github.com/merlinpratheesh/docker-dashboard.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Package Docker Image') {
             steps {
+                // Build Docker image (this stage also builds Angular inside Docker)
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
 
         stage('Deploy Docker Container') {
             steps {
-                bat """
-                docker stop %APP_NAME% || exit 0
-                docker rm %APP_NAME% || exit 0
-                docker run -d -p 5001:80 --name %APP_NAME% %IMAGE_NAME%:%IMAGE_TAG%
-                """
+                // Stop existing container if running
+                bat "docker stop %APP_NAME% || exit 0"
+                bat "docker rm %APP_NAME% || exit 0"
+
+                // Run new container on port 5001
+                bat "docker run -d -p 5001:80 --name %APP_NAME% %IMAGE_NAME%:%IMAGE_TAG%"
             }
         }
     }
@@ -36,7 +39,7 @@ pipeline {
             echo "✅ Docker deployment completed successfully! Access app at http://<server-ip>:5001"
         }
         failure {
-            echo "❌ Deployment failed."
+            echo "❌ Deployment failed. Check Docker build logs for errors."
         }
     }
 }
