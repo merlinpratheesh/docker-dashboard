@@ -7,14 +7,16 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy source code and build
+# Copy source code
 COPY . .
+
+# Build Angular for production
 RUN npm run build -- --configuration production
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy Angular build output
+# Copy Angular build output to Nginx html folder
 COPY --from=build /app/dist/merlin-dashboard /usr/share/nginx/html
 
 # Copy Nginx config
