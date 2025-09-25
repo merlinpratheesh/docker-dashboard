@@ -6,13 +6,13 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies (includes devDependencies with Angular CLI)
+# Install dependencies including devDependencies
 RUN npm ci
 
 # Copy all source code
 COPY . .
 
-# Build Angular for production (project name is merlin-dashboard)
+# Build Angular for production (merlin-dashboard is project name)
 RUN npx --yes ng build merlin-dashboard --configuration production
 
 # Stage 2: Serve with Nginx
@@ -21,7 +21,7 @@ FROM nginx:alpine
 # Copy Angular build output to Nginx html folder
 COPY --from=build /app/dist/merlin-dashboard /usr/share/nginx/html
 
-# Copy custom Nginx config
+# Copy Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
