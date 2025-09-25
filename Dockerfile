@@ -6,7 +6,7 @@ WORKDIR /usr/share/nginx/html
 
 # Copy pre-built Angular app from Jenkins workspace
 # Assuming you build Docker from workspace root (merlinDockerDeploy)
-COPY dist/merlin-dashboard/browser .
+COPY dist/docker-deploy/browser .
 
 # Copy custom Nginx configuration for Angular routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
