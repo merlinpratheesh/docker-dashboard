@@ -5,22 +5,23 @@ pipeline {
         APP_NAME = "merlin-dashboard"
         IMAGE_NAME = "merlin-dashboard"
         IMAGE_TAG = "latest"
-        DOCKER_REGISTRY = "docker.io/your-dockerhub-username"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/merlinpratheesh/docker-dashboard.git'
+                git branch: 'master', url: 'https://github.com/merlinpratheesh/docker-dashboard.git'
             }
         }
 
+        // Optional: you can remove this if Dockerfile handles Angular build
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
 
+        // Optional: remove if Dockerfile builds Angular
         stage('Build Angular App') {
             steps {
                 bat 'npm run build -- --configuration production'
@@ -29,18 +30,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t %DOCKER_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG% ."
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat """
-                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                    docker push %DOCKER_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
-                    """
-                }
+                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
 
@@ -49,7 +39,7 @@ pipeline {
                 bat """
                 docker stop %APP_NAME% || exit 0
                 docker rm %APP_NAME% || exit 0
-                docker run -d -p 8080:80 --name %APP_NAME% %DOCKER_REGISTRY%/%IMAGE_NAME%:%IMAGE_TAG%
+                docker run -d -p 8080:80 --name %APP_NAME% %IMAGE_NAME%:%IMAGE_TAG%
                 """
             }
         }
