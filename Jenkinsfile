@@ -14,20 +14,6 @@ pipeline {
             }
         }
 
-        // Optional: you can remove this if Dockerfile handles Angular build
-        stage('Install Dependencies') {
-            steps {
-                bat 'npm install'
-            }
-        }
-
-        // Optional: remove if Dockerfile builds Angular
-        stage('Build Angular App') {
-            steps {
-                bat 'npm run build -- --configuration production'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
@@ -47,7 +33,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Docker deployment completed successfully!"
+            echo "✅ Docker deployment completed successfully! Access app at http://<server-ip>:5001"
         }
         failure {
             echo "❌ Deployment failed."
