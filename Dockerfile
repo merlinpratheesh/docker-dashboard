@@ -10,8 +10,8 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build Angular for production
-RUN npm run build -- --configuration production
+# Build Angular for production using npx
+RUN npx ng build --configuration production
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
