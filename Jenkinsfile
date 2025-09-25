@@ -16,22 +16,24 @@ pipeline {
 
         stage('Install & Build Angular') {
             steps {
-                // Install dependencies and build Angular into dist/
+                // Install dependencies including devDependencies
                 bat 'npm ci'
+
+                // Build Angular once
                 bat 'npx ng build merlin-dashboard --configuration production'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                // Build Docker image (will copy the freshly built dist/)
+                // Docker just packages pre-built dist
                 bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
 
         stage('Deploy Docker Container') {
             steps {
-                // Stop and remove existing container if running
+                // Stop existing container if running
                 bat "docker stop %APP_NAME% || exit 0"
                 bat "docker rm %APP_NAME% || exit 0"
 
@@ -46,7 +48,7 @@ pipeline {
             echo "✅ Docker deployment completed successfully! Access app at http://<server-ip>:5001"
         }
         failure {
-            echo "❌ Deployment failed. Check Docker logs."
+            echo "❌ Deployment failed. Check Docker logs for details."
         }
     }
 }
